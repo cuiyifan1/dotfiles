@@ -14,7 +14,6 @@ filetype plugin indent on
 set autoindent
 
 set t_Co=256
-set relativenumber 
 set showcmd
 set showmode
 set ruler
@@ -35,10 +34,10 @@ if has('nvim') || has('termguicolors')
 endif
 
 " quicker noremal mode movement
-noremap <silent> H 5h
+noremap <silent> H ^
 noremap <silent> J 5j
 noremap <silent> K 5k
-noremap <silent> L 5l
+noremap <silent> L g_
 noremap <silent> W 5w
 noremap <silent> E 5e
 noremap <silent> B 5b
