@@ -20,7 +20,7 @@ set ruler
 set background=dark
 set encoding=utf-8
 
-" use four spaces instead of when formatting
+" use four spaces instead of tabs during formatting
 set expandtab
 set shiftwidth=4
 set tabstop=4
