@@ -1,8 +1,9 @@
 set ideajoin
+nnoremap U <C-r>
+noremap <silent> _ %
+noremap <silent> - dd
 noremap <silent> H ^
 noremap <silent> J 5j
 noremap <silent> K 5k
 noremap <silent> L g_
-noremap <silent> W 5w
-noremap <silent> E 5e
-noremap <silent> B 5b
+inoremap <silent> <C-j> <Backspace>
