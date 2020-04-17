@@ -5,6 +5,7 @@
 
 "autocmd BufWritePre * :normal gg=G " reindent every time write file
 " get to the newest change
+let mapleader = ' ' " map leader key to <Space>
 nnoremap U <C-r>
 " uppercase
 inoremap <C-u> <Esc>vawUea
@@ -62,7 +63,7 @@ set smartcase                                                           " Overri
 set showmatch                                                           " Show matching brackets/parenthesis
 set ruler                                                               " show the cursor's position
 set history=1000                                                        " save 1000 cmd
-set timeoutlen=500                                                      " give u 500 time to react for cmd
+set timeoutlen=1000                                                      " time in milliseconds to wait for a mapped sequence to complete
 set background=dark
 
 " Editor {{{
@@ -100,24 +101,27 @@ filetype plugin indent on " 自动补全
 " vim-plug download configurations {{{
 call plug#begin('~/.config/nvim/autoload')
 
-Plug 'dracula/vim', { 'as': 'dracula' }
+Plug 'wellle/targets.vim'
+Plug 'vim-airline/vim-airline'
+Plug 'vim-airline/vim-airline-themes'
+Plug 'dracula/vim'
+Plug 'ludovicchabant/vim-gutentags'
+Plug 'vim-scripts/argtextobj.vim'
 Plug 'lervag/vimtex'
 Plug 'junegunn/goyo.vim'
 Plug 'preservim/nerdcommenter'
 Plug 'liuchengxu/vista.vim'
-Plug 'mhinz/vim-startify'
 Plug 'tpope/vim-eunuch'
 Plug 'psf/black', { 'commit': 'ce14fa8b497bae2b50ec48b3bd7022573a59cdb1' } "python fixer
-Plug 'Yggdroot/LeaderF'
+Plug 'Yggdroot/LeaderF', { 'do': './install.sh' }
 Plug 'easymotion/vim-easymotion'
 Plug 'rust-lang/rust.vim' 
-Plug 'vim-airline/vim-airline'
-Plug 'vim-airline/vim-airline-themes'
-Plug 'suan/vim-instant-markdown', {'for': 'markdown'}
 Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
 Plug 'MattesGroeger/vim-bookmarks'
 Plug 'dense-analysis/ale'
 Plug 'neoclide/coc.nvim', {'branch': 'release'} 
+Plug 'mhinz/vim-startify'
+Plug 'suan/vim-instant-markdown'
 Plug 'ryanoasis/vim-devicons'
 
 call plug#end()
@@ -126,7 +130,7 @@ call plug#end()
 colorscheme dracula
 
 " nerdcommenter configurations--添加注释 {{{
-let g:NERDCustomDelimiters = { 'c': { 'left': '/**','right': '*/' } }
+let g:NERDCustomDelimiters = { 'c': { 'left': '/*','right': '*/' } }
 let g:NERDSpaceDelims = 1
 let g:NERDCompactSexyComs = 1
 let g:NERDDefaultAlign = 'left'
@@ -142,9 +146,12 @@ let g:NERDToggleCheckAllLines = 1
 let g:rustfmt_autosave = 1
 
 " Leaderf {{{
+let g:Lf_ShowDevIcons = 1
+let g:Lf_DevIconsFont = "DejaVuSansMono Nerd Font Mono"
 let g:Lf_WindowPosition = 'popup'
 let g:Lf_PreviewInPopup = 1
 let g:Lf_PreviewResult = {'Function':1, 'Colorscheme':1}
+noremap <Leader>fp :LeaderfFile ..<CR>
 noremap <Leader>fm :LeaderfMru<CR>
 noremap <Leader>fu :LeaderfFunction<CR>
 noremap <Leader>fw :LeaderfWindow<CR>
@@ -161,6 +168,22 @@ let g:Lf_NormalMap = {
             \ "Function":    [["<ESC>", ':exec g:Lf_py "functionExplManager.quit()"<CR>']],
             \ "Colorscheme":    [["<ESC>", ':exec g:Lf_py "colorschemeExplManager.quit()"<CR>']],
             \}
+
+" rg(ripgrep) built in Leaderf config
+let g:Lf_GtagsAutoGenerate = 1
+let g:Lf_Gtagslabel = 'native-pygments'
+let g:Lf_RgConfig = [
+        \ "--max-columns=150",
+        \ "--glob=!git/*",
+        \ "--hidden"
+    \ ]
+noremap <Leader>a :<C-U><C-R>=printf("Leaderf! rg -e %s -g *.h -g *.cpp -g *.c", expand("<cword>"))<CR><CR>
+
+
+let g:Lf_RootMarkers = ['.project', '.root', '.svn', '.git'] " I have no idea what it's saying
+let g:Lf_WorkingDirectoryMode = 'Ac' " I have no idea what it's doing
+let g:Lf_CacheDirectory = expand('~/.config/nvim/cache')
+
 " }}}
 
 "gtags
@@ -195,5 +218,9 @@ let g:airline#extensions#tabline#enabled = 1
 "let g:airline_theme = 'dracula'
 let g:airline_powerline_fonts = 1
 
-" Coc-explorer
-noremap <Leader>ce :CocCommand explorer<CR>
+" add fake vim-textobj-function with target.vim
+nmap cif o<Esc>cib
+nmap dif o<Esc>dib
+nmap caf o<Esc>cab<Esc>cc
+nmap daf o<Esc>dab<Esc>cc<Esc>
+
