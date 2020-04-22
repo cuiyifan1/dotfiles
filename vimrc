@@ -39,8 +39,8 @@ nnoremap <C-p> :bp<CR>
 set nocompatible                                                        " nocompatible with vi
 set foldmethod=marker                                                   " manage vimrc files
 set nospell                                                             " close spell examine
-set number                                                              " show line number
-set relativenumber                                                      " show relative line number
+" set number                                                              " show line number
+" set relativenumber                                                      " show relative line number
 set hlsearch                                                            " highlight the search part
 set incsearch                                                           " show the matching part while typing
 set encoding=utf-8                                                      " configure the encoding
@@ -101,6 +101,7 @@ filetype plugin indent on " 自动补全
 " vim-plug download configurations {{{
 call plug#begin('~/.config/nvim/autoload')
 
+Plug 'liuchengxu/space-vim-dark'
 Plug 'wellle/targets.vim'
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
@@ -127,7 +128,7 @@ Plug 'ryanoasis/vim-devicons'
 call plug#end()
 " }}}
 
-colorscheme dracula
+colorscheme Wizard
 
 " nerdcommenter configurations--添加注释 {{{
 let g:NERDCustomDelimiters = { 'c': { 'left': '/*','right': '*/' } }
@@ -223,4 +224,3 @@ nmap cif o<Esc>cib
 nmap dif o<Esc>dib
 nmap caf o<Esc>cab<Esc>cc
 nmap daf o<Esc>dab<Esc>cc<Esc>
-
