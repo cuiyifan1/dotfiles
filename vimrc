@@ -5,6 +5,8 @@
 
 "autocmd BufWritePre * :normal gg=G " reindent every time write file
 " get to the newest change
+syntax on " turn on syntax highlighting
+set nocompatible                                                        " nocompatible with vi
 let mapleader = ' ' " map leader key to <Space>
 nnoremap U <C-r>
 " uppercase
@@ -31,16 +33,19 @@ nnoremap <Leader>3 3gt
 nnoremap <Leader>4 4gt
 nnoremap <C-n> :bn<CR>
 nnoremap <C-p> :bp<CR>
+" quicker input
+nnoremap <M-o> ddO
+inoremap <M-o> <Esc>ddO
 
+filetype plugin indent on " enable file type detection
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "                                Basic Settings                                "
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-set nocompatible                                                        " nocompatible with vi
 set foldmethod=marker                                                   " manage vimrc files
 set nospell                                                             " close spell examine
-" set number                                                              " show line number
-" set relativenumber                                                      " show relative line number
+set number                                                              " show line number
+set relativenumber                                                      " show relative line number
 set hlsearch                                                            " highlight the search part
 set incsearch                                                           " show the matching part while typing
 set encoding=utf-8                                                      " configure the encoding
@@ -52,7 +57,7 @@ set confirm                                                             " Confir
 set lazyredraw                                                          " don't update the display while executing macros
 set nomodeline                                                          " disable mode lines (security measure)
 set noshowmode                                                          " do not show Insert, We already have it in lightline
-" set mouse=a                                                             " allow mouse select and etc operation
+set mouse=a                                                             " allow mouse select and etc operation
 set noswapfile                                                          " no swap files
 set nobackup
 set noautochdir                                                         " do not change dirs automatically
@@ -92,15 +97,11 @@ set wildignore+=.DS_Store                                               " OSX fi
 set wildignore+=.git,.hg                                                " VCS files
 set termguicolors                                                       " enable 24bit colors
 
-syntax enable
-
-filetype indent on
-filetype plugin on
-filetype plugin indent on " 自动补全
 
 " vim-plug download configurations {{{
 call plug#begin('~/.config/nvim/autoload')
 
+Plug 'jiangmiao/auto-pairs'
 Plug 'liuchengxu/space-vim-dark'
 Plug 'wellle/targets.vim'
 Plug 'vim-airline/vim-airline'
@@ -216,7 +217,6 @@ autocmd BufWritePre *.py execute ':Black'
 
 " vim-airline
 let g:airline#extensions#tabline#enabled = 1
-"let g:airline_theme = 'dracula'
 let g:airline_powerline_fonts = 1
 
 " add fake vim-textobj-function with target.vim
@@ -224,3 +224,5 @@ nmap cif o<Esc>cib
 nmap dif o<Esc>dib
 nmap caf o<Esc>cab<Esc>cc
 nmap daf o<Esc>dab<Esc>cc<Esc>
+
+"autopairs
