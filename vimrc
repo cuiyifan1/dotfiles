@@ -12,7 +12,7 @@ nnoremap U <C-r>
 " uppercase
 inoremap <C-u> <Esc>vawUea
 " a easier way to 'e'dit my 'v'imrc file
-nnoremap <Leader>ev :sp ~/.config/vimrc<CR>
+nnoremap <Leader>ev :tabnew ~/.config/vimrc<CR>
 " source vimrc immediately
 nnoremap <Leader>sv :source $MYVIMRC<CR>
 noremap <silent> _ %
@@ -21,14 +21,42 @@ noremap <silent> H ^
 noremap <silent> L g_
 noremap <silent> J 5j
 noremap <silent> K 5k
-" quicker window movement
+
+" quicker window movement -- Windows are 'not' designed to offer you a view into a buffer and can not be uses as file-proxies.No more, no less.{{{
 noremap <C-j> <C-w>j
 noremap <C-k> <C-w>k
 noremap <C-h> <C-w>h
 noremap <C-l> <C-w>l
-" tabs
+" }}}
+
+" buffers -- Buffers are vim's file-proxies. If you think in terms of file, you think in terms of buffers, which is used in situation that one for editing and one for referencing.{{{
 nnoremap <C-n> :bn<CR>
 nnoremap <C-p> :bp<CR>
+" close the current buffer and move to next one
+map Q :bdelete\|:bnext<CR>
+" }}}
+
+" tab settings -- tab page are designed to contain one or more windows and contain buffers, which is often used on the separate part of the project and without messing with their current view.{{{
+noremap <M-n> :tabn<CR>
+noremap <M-p> :tabp<CR>
+" open a new tab with an empty buffer like ':tabnew filename'
+noremap <M-t> :tabnew
+" // move the tabs to a specific spot with command ':tabm <tabPosition>', if
+" // don't give the command an <tabPosition> argument, then the current tab will
+" // be moved to the last spot
+" noremap tm :tabm
+" // open the content of current buffer in a new tab page
+" noremap ts :tab split<CR>
+"
+" // :tabdo %s/foo/bar/g -- replace foo with bar in files in all tabs
+" // or run through each open tab and run the search and replace
+" // command(%s/foo/bar/g) in each
+" // one
+"
+" :tabc -- close current tab
+" :tabo -- close all other tabs leaving ONLY the current tab open
+" }}}
+
 " quicker input
 nnoremap <M-o> ddO
 inoremap <M-o> <Esc>ddO
@@ -85,7 +113,6 @@ set showmatch " Show matching brackets/parenthesis
 set ruler " show the cursor's position
 set history=1000 " save 1000 cmd
 set timeoutlen=1000 " time in milliseconds to wait for a mapped sequence to complete
-set background=dark
 
 " Editor {{{
 set autoindent                                   
@@ -100,8 +127,7 @@ set autowrite
 set autowriteall " Auto-write all file changes
 set laststatus=2 " show status line
 set showtabline=2
-set t_Co=256 " number of colors
-set hidden " make buffers hidden then abandoned and if hidden is not set, TextEdit might fail
+set hidden " make it possible to switch to another buffer when current buffer is not writed and abandoned
 set display+=lastline
 set showcmd                                                            
 set statusline+=%*
@@ -147,8 +173,15 @@ Plug 'ryanoasis/vim-devicons'
 call plug#end()
 " }}}
 
+" color {{{
+set background=dark
 colorscheme Wizard
-set termguicolors
+" set t_Co=256
+" enable true color
+if has("termguicolors")
+    set termguicolors
+endif
+" }}}
 
 " nerdcommenter configurations--添加注释 {{{
 let g:NERDCustomDelimiters = { 'c': { 'left': '/*','right': '*/' } }
@@ -256,9 +289,21 @@ function! s:check_back_space() abort
   return !col || getline('.')[col - 1]  =~# '\s'
 endfunction
 
+" Use <m-space> to trigger completion.
+inoremap <silent><expr> <m-space> coc#refresh()
+
+" Use <cr> to confirm completion, `<C-g>u` means break undo chain at current
+" position. Coc only does snippet and additional edit on confirm.
+" <cr> could be remapped by other vim plugin, try `:verbose imap <CR>`.
+if exists('*complete_info')
+  inoremap <expr> <cr> complete_info()["selected"] != "-1" ? "\<C-y>" : "\<C-g>u\<CR>"
+else
+  inoremap <expr> <cr> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
+endif
+
 " }}}
 
-"Gtags
+" Gtags
 " 告诉 gtags 默认 C/C++/Java 等六种原生支持的代码直接使用 gtags 本地分析器，而其他语言使用 pygments 模块
 let $GTAGSLABEL = 'native-pygments'
 " 必须设置，否则会找不到native-pygments和language map的定义
@@ -283,6 +328,4 @@ let g:gutentags_auto_add_gtags_cscope = 0
 let g:gutentags_ctags_extra_args = ['--fields=+niazS', '--extra=+q']
 let g:gutentags_ctags_extra_args += ['--c++-kinds=+px']
 let g:gutentags_ctags_extra_args += ['--c-kinds=+px']
-
-
 " }}}
