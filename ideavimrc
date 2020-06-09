@@ -1,9 +1,7 @@
 set ideajoin
+set incsearch " show the matching part while typing
 nnoremap U <C-r>
-noremap <silent> _ %
-noremap <silent> - dd
-noremap <silent> H ^
-noremap <silent> J 5j
-noremap <silent> K 5k
-noremap <silent> L g_
-inoremap <silent> <C-j> <Backspace>
+noremap <silent> = %
+noremap <M-h> zt
+noremap <M-m> zz
+noremap <M-l> zb

@@ -15,18 +15,16 @@ inoremap <C-u> <Esc>vawUea
 nnoremap <Leader>ev :tabnew ~/.config/vimrc<CR>
 " source vimrc immediately
 nnoremap <Leader>sv :source $MYVIMRC<CR>
-noremap <silent> _ %
-noremap <silent> - dd
-noremap <silent> H ^
-noremap <silent> L g_
-noremap <silent> J 5j
-noremap <silent> K 5k
+noremap <silent> = %
 
 " quicker window movement -- Windows are 'not' designed to offer you a view into a buffer and can not be uses as file-proxies.No more, no less.{{{
 noremap <C-j> <C-w>j
 noremap <C-k> <C-w>k
 noremap <C-h> <C-w>h
 noremap <C-l> <C-w>l
+noremap <M-h> zt
+noremap <M-m> zz
+noremap <M-l> zb
 " }}}
 
 " buffers -- Buffers are vim's file-proxies. If you think in terms of file, you think in terms of buffers, which is used in situation that one for editing and one for referencing.{{{
@@ -60,20 +58,6 @@ noremap <M-t> :tabnew
 " quicker input
 nnoremap <M-o> ddO
 inoremap <M-o> <Esc>ddO
-" auto close {
-function! s:CloseBracket()
-    let line = getline('.')
-    if line =~# '^\s*\(struct\|class\|enum\) '
-        return "{\<Enter>};\<Esc>O"
-    elseif searchpair('(', '', ')', 'bmn', '', line('.'))
-        " Probably inside a function call. Close it off.
-        return "{\<Enter>});\<Esc>O"
-    else
-        return "{\<Enter>}\<Esc>O"
-    endif
-endfunction
-
-inoremap <expr> {<Enter> <SID>CloseBracket()
 
 
 filetype plugin indent on " enable file type detection
@@ -102,7 +86,7 @@ set nobackup " some lsp servers have issues with backup files, see coc.nvim #649
 set nowritebackup
 set cmdheight=1 " Better display for messages 
 set updatetime=300 " You will have bad experience for disgnostic messages when it's default 4000
-set shortmess+=c " don't give |ins-completion-menu| message
+set shortmess+=c
 set signcolumn=yes " always show signcolumns otherwise it would shift the text each time diagnostics appear/become resolved.
 set noautochdir " do not change dirs automatically
 set noerrorbells " No sound
@@ -143,16 +127,18 @@ set tags=./.tags;,.tags
 set wildmenu " use <tab> with auto-completion in Command mode
 set wildmode=longest,list,full
 set visualbell
+" set virtualedit=all " allow cursor to be positioned where there is no actual characters
+set modifiable
 
 
 " vim-plug download confjigurations {{{
 call plug#begin('~/.config/nvim/autoload')
 
+Plug 'iamcco/markdown-preview.nvim', { 'do': { -> mkdp#util#install() }, 'for': ['markdown', 'vim-plug']}
 Plug 'liuchengxu/space-vim-dark'
 Plug 'wellle/targets.vim'
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
-Plug 'dracula/vim'
 Plug 'ludovicchabant/vim-gutentags'
 Plug 'vim-scripts/argtextobj.vim'
 Plug 'preservim/nerdcommenter'
@@ -167,7 +153,6 @@ Plug 'MattesGroeger/vim-bookmarks'
 Plug 'dense-analysis/ale'
 Plug 'neoclide/coc.nvim', {'branch': 'release'} 
 Plug 'mhinz/vim-startify'
-Plug 'suan/vim-instant-markdown'
 Plug 'ryanoasis/vim-devicons'
 
 call plug#end()
@@ -268,7 +253,7 @@ autocmd BufWritePre *.py execute ':Black'
 let g:airline#extensions#tabline#enabled = 1
 let g:airline_powerline_fonts = 1
 
-" add fake vim-textobj-function with target.vim
+" add fake vim-textobj-function with target.vim(can not paste...)
 nmap cif o<Esc>cib
 nmap dif o<Esc>dib
 nmap caf o<Esc>cab<Esc>cc
@@ -328,4 +313,11 @@ let g:gutentags_auto_add_gtags_cscope = 0
 let g:gutentags_ctags_extra_args = ['--fields=+niazS', '--extra=+q']
 let g:gutentags_ctags_extra_args += ['--c++-kinds=+px']
 let g:gutentags_ctags_extra_args += ['--c-kinds=+px']
+" }}}
+
+" markdown preview for nvim {{{
+let g:mkdp_auto_start = 1 " open the window after entering markdown buffer
+let g:mkdp_auto_close = 1 " the vim will refresh markdown when save the buffer or leave from insert mode, default 0 is auto refresh markdown as you edit or move the cursor
+let g:mkdp_refresh_slow = 1
+let g:mkdp_browser = ''
 " }}}
