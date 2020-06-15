@@ -1,10 +1,26 @@
-" Caution: Mapping should place before PluginConfigure
+" __  ____   __  _   ___     _____ __  __ ____   ____
+"|  \/  \ \ / / | \ | \ \   / /_ _|  \/  |  _ \ / ___|
+"| |\/| |\ V /  |  \| |\ \ / / | || |\/| | |_) | |
+"| |  | | | |   | |\  | \ V /  | || |  | |  _ <| |___
+"|_|  |_| |_|   |_| \_|  \_/  |___|_|  |_|_| \_\\____|
+"
+
+" Author: @Sam
+"
+"
+"
+
+" Auto load for first time uses
+if empty(glob('~/.local/share/nvim/site/autoload/plug.vim'))
+	silent !curl -fLo ~/.config/nvim/autoload/plug.vim --create-dirs
+				\ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+	autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
+endif
+
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "                                   Mappings                                   "
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
-" autocmd BufWritePre * :normal gg=G " reindent every time write file
-" get to the newest change
 syntax on " turn on syntax highlighting
 set nocompatible " nocompatible with vi
 let mapleader = ' ' " map leader key to <Space>
@@ -139,7 +155,6 @@ Plug 'liuchengxu/space-vim-dark'
 Plug 'wellle/targets.vim'
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
-Plug 'ludovicchabant/vim-gutentags'
 Plug 'vim-scripts/argtextobj.vim'
 Plug 'preservim/nerdcommenter'
 Plug 'liuchengxu/vista.vim'
@@ -290,29 +305,29 @@ endif
 
 " Gtags
 " 告诉 gtags 默认 C/C++/Java 等六种原生支持的代码直接使用 gtags 本地分析器，而其他语言使用 pygments 模块
-let $GTAGSLABEL = 'native-pygments'
-" 必须设置，否则会找不到native-pygments和language map的定义
-let $GTAGSCONF = '~/.globalrc'
-
-" Gutentags {{{
-
-" gutentags 搜索工程目录的标志，碰到这些文件/目录名就停止向上一级目录递归
-let g:gutentags_project_root = ['.root', '.svn', '.git', '.hg', '.project', 'Makefile']
-
-" 所生成的数据文件的名称
-let g:gutentags_ctags_tagfile = '.tags'
-
-" 将自动生成的 ctags/gtags 文件全部放入 ~/.cache/tags 目录中，避免污染工程目录
-let s:vim_tags = expand('~/.cache/tags')
-let g:gutentags_cache_dir = s:vim_tags
-
-" 禁用 gutentags 自动加载 gtags 数据库的行为
-let g:gutentags_auto_add_gtags_cscope = 0
-
-" 配置 ctags 的参数
-let g:gutentags_ctags_extra_args = ['--fields=+niazS', '--extra=+q']
-let g:gutentags_ctags_extra_args += ['--c++-kinds=+px']
-let g:gutentags_ctags_extra_args += ['--c-kinds=+px']
+" let $GTAGSLABEL = 'native-pygments'
+" " 必须设置，否则会找不到native-pygments和language map的定义
+" let $GTAGSCONF = '~/.globalrc'
+"
+" " Gutentags {{{
+"
+" " gutentags 搜索工程目录的标志，碰到这些文件/目录名就停止向上一级目录递归
+" let g:gutentags_project_root = ['.root', '.svn', '.git', '.hg', '.project', 'Makefile']
+"
+" " 所生成的数据文件的名称
+" let g:gutentags_ctags_tagfile = '.tags'
+"
+" " 将自动生成的 ctags/gtags 文件全部放入 ~/.cache/tags 目录中，避免污染工程目录
+" let s:vim_tags = expand('~/.cache/tags')
+" let g:gutentags_cache_dir = s:vim_tags
+"
+" " 禁用 gutentags 自动加载 gtags 数据库的行为
+" let g:gutentags_auto_add_gtags_cscope = 0
+"
+" " 配置 ctags 的参数
+" let g:gutentags_ctags_extra_args = ['--fields=+niazS', '--extra=+q']
+" let g:gutentags_ctags_extra_args += ['--c++-kinds=+px']
+" let g:gutentags_ctags_extra_args += ['--c-kinds=+px']
 " }}}
 
 " markdown preview for nvim {{{
