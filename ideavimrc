@@ -2,6 +2,3 @@ set ideajoin
 set incsearch " show the matching part while typing
 nnoremap U <C-r>
 noremap <silent> = %
-noremap <M-h> zt
-noremap <M-m> zz
-noremap <M-l> zb

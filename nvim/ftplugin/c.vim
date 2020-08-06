@@ -2,6 +2,4 @@
 if (&ft != 'c')
     finish
 endif
-set tabstop=8
-set softtabstop=8
-set shiftwidth=8
+set tabstop=8 softtabstop=8 shiftwidth=8 expandtab
