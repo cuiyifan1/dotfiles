@@ -4,3 +4,4 @@ autoload/
 tmp/
 .netrwhist
 cache/
+colors/

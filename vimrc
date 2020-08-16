@@ -8,17 +8,12 @@ let mapleader = ' ' " map leader key to <Space>
 call plug#begin('~/.config/nvim/autoload')
 
 Plug 'iamcco/markdown-preview.nvim', { 'do': { -> mkdp#util#install() }, 'for': ['markdown', 'vim-plug']}
-Plug 'wellle/targets.vim'
-Plug 'vim-airline/vim-airline'
-Plug 'vim-airline/vim-airline-themes'
-Plug 'vim-scripts/argtextobj.vim'
-Plug 'tpope/vim-eunuch'
+Plug 'wellle/targets.vim' " add various text objects
 Plug 'Yggdroot/LeaderF', { 'do': './install.sh' }
 Plug 'easymotion/vim-easymotion'
-Plug 'neoclide/coc.nvim', {'branch': 'release'} 
-Plug 'mhinz/vim-startify'
 Plug 'ryanoasis/vim-devicons'
-Plug 'preservim/nerdcommenter'
+Plug 'vim-airline/vim-airline'
+Plug 'vim-airline/vim-airline-themes'
 
 call plug#end()
 " }}}
@@ -32,11 +27,10 @@ if has("termguicolors")
 endif
 " }}}
 
-nnoremap U <C-r>
-" uppercase
+nnoremap U <C-r> " uppercase
 inoremap <C-u> <Esc>vawUea
 " a easier way to 'e'dit my 'v'imrc file
-nnoremap <Leader>ev :tabnew ~/.config/vimrc<CR>
+nnoremap <Leader>ev :sp ~/.config/vimrc<CR>
 " source vimrc immediately
 nnoremap <Leader>sv :source $MYVIMRC<CR>
 noremap <silent> = %
@@ -58,9 +52,9 @@ noremap <C-j> <C-w>j
 noremap <C-k> <C-w>k
 noremap <C-h> <C-w>h
 noremap <C-l> <C-w>l
-noremap <M-h> zt
-noremap <M-m> zz
-noremap <M-l> zb
+" noremap <M-h> zt
+" noremap <M-m> zz
+" noremap <M-l> zb
 " }}}
 
 " buffers -- Buffers are vim's file-proxies. If you think in terms of file, you think in terms of buffers, which is used in situation that one for editing and one for referencing.{{{
@@ -71,10 +65,10 @@ map Q :bdelete\|:bnext<CR>
 " }}}
 
 " tab settings -- tab page are designed to contain one or more windows and contain buffers, which is often used on the separate part of the project and without messing with their current view.{{{
-noremap <M-n> :tabn<CR>
-noremap <M-p> :tabp<CR>
+" noremap <M-n> :tabn<CR>
+" noremap <M-p> :tabp<CR>
 " open a new tab with an empty buffer like ':tabnew filename'
-noremap <M-t> :tabnew
+" noremap <M-t> :tabnew
 " // move the tabs to a specific spot with command ':tabm <tabPosition>', if
 " // don't give the command an <tabPosition> argument, then the current tab will
 " // be moved to the last spot
@@ -114,9 +108,8 @@ set nomodeline " disable mode lines (security measure)
 set noshowmode " do not show Insert, We already have it in lightline
 set mouse=a " allow mouse select and etc operation
 set noswapfile " no swap files
-set nobackup " some lsp servers have issues with backup files, see coc.nvim #649
 set nowritebackup
-set cmdheight=2 " Better display for messages 
+set cmdheight=1 " Better display for messages 
 set updatetime=200 " You will have bad experience for disgnostic messages when it's default 4000
 set shortmess+=c
 set signcolumn=yes " always show signcolumns otherwise it would shift the text each time diagnostics appear/become resolved.
@@ -142,7 +135,7 @@ set autoread
 set autowrite
 set autowriteall " Auto-write all file changes
 set laststatus=2 " show status line
-set showtabline=2
+set showtabline=0
 set hidden " make it possible to switch to another buffer when current buffer is not writed and abandoned
 set display+=lastline
 set showcmd                                                            
@@ -180,7 +173,7 @@ noremap <Leader>fu :LeaderfFunction<CR>
 noremap <Leader>fw :LeaderfWindow<CR>
 noremap <Leader>fb :LeaderfBuffer<CR>
 noremap <Leader>fc :LeaderfColorscheme<CR>
-noremap <Leader>fl :LeaderfLine<CR>
+noremap <Leader>fl :Leaderf! line<CR>
 noremap <Leader>ff :LeaderfFile<CR>
 noremap <Leader>fr :Leaderf rg<CR>
 noremap <Leader>fg :Leaderf gtags<CR>
@@ -207,48 +200,6 @@ let g:Lf_CacheDirectory = expand('~/.config/nvim/cache')
 " easy-motion
 nmap mo <Plug>(easymotion-s2)
 
-" vim-airline
-let g:airline#extensions#tabline#enabled = 1
-let g:airline_powerline_fonts = 1
-
-" coc.nvim {{{
-" clangd(llvm) with coc-clangd as language server instead of ccls which is
-" hard to use!
-inoremap <silent><expr> <TAB>
-            \ pumvisible() ? "\<C-n>" :
-            \ <SID>check_back_space() ? "\<TAB>" :
-            \ coc#refresh()
-inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
-
-function! s:check_back_space() abort
-  let col = col('.') - 1
-  return !col || getline('.')[col - 1]  =~# '\s'
-endfunction
-
-" Use <m-space> to trigger completion.
-inoremap <silent><expr> <m-space> coc#refresh()
-
-" Use <cr> to confirm completion, `<C-g>u` means break undo chain at current
-" position. Coc only does snippet and additional edit on confirm.
-" <cr> could be remapped by other vim plugin, try `:verbose imap <CR>`.
-if exists('*complete_info')
-  inoremap <expr> <cr> complete_info()["selected"] != "-1" ? "\<C-y>" : "\<C-g>u\<CR>"
-else
-  inoremap <expr> <cr> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
-endif
-
-" Diagnositcs(also :CocDiagnositcs)
-nmap <silent> [g <Plug>(coc-diagnostic-prev)
-nmap <silent> ]g <Plug>(coc-diagnostic-next)
-nmap <silent> \g :CocDiagnostics<CR>
-
-" GoTo code navigation.
-nmap <silent> gd <Plug>(coc-definition)
-nmap <silent> gy <Plug>(coc-type-definition)
-nmap <silent> gi <Plug>(coc-implementation)
-nmap <silent> gr <Plug>(coc-references)
-" }}}
-
 " markdown preview for nvim {{{
 let g:mkdp_auto_start = 1 " open the window after entering markdown buffer
 let g:mkdp_auto_close = 1 " the vim will refresh markdown when save the buffer or leave from insert mode, default 0 is auto refresh markdown as you edit or move the cursor
@@ -258,3 +209,7 @@ let g:mkdp_browser = ''
 
 " black(python code linter)
 let g:black_linelength = 79
+
+" vim-airline
+let g:airline#extensions#tabline#enabled = 1
+let g:airline_powerline_fonts = 1
