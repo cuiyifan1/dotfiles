@@ -1,17 +1,31 @@
+":help hardcopy
+":help TOhtml
+":help %y
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "                                   Mappings                                   "
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 set nocompatible " nocompatible with vi
 let mapleader = ' ' " map leader key to <Space>
 
+" automatically downloads vim-plug to your machine if not found.
+if empty(glob('~/.config/nvim/autoload/plug.vim'))
+  silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs
+    \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+  autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
+endif
+
 " vim-plug download confjigurations {{{
 call plug#begin('~/.config/nvim/autoload')
 
+Plug 'nvim-treesitter/nvim-treesitter'
+Plug 'ajmwagar/vim-deus'
 Plug 'iamcco/markdown-preview.nvim', { 'do': { -> mkdp#util#install() }, 'for': ['markdown', 'vim-plug']}
 Plug 'wellle/targets.vim' " add various text objects
 Plug 'Yggdroot/LeaderF', { 'do': './install.sh' }
 Plug 'easymotion/vim-easymotion'
-Plug 'ryanoasis/vim-devicons'
+Plug 'ryanoasis/vim-devicons' " icons
+Plug 'preservim/nerdtree'
+Plug 'neoclide/coc.nvim', {'branch': 'release'}
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
 
@@ -19,35 +33,32 @@ call plug#end()
 " }}}
 
 " color {{{
-set background=dark
 syntax on " turn on syntax highlighting
-colorscheme Wizard
-if has("termguicolors")
-    set termguicolors
-endif
+colorscheme deus
+set t_Co=256
+set termguicolors
+set background=dark    " Setting dark mode
+let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
+let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
+let g:deus_termcolors=256
 " }}}
 
-nnoremap U <C-r> " uppercase
+nnoremap U <C-r>
 inoremap <C-u> <Esc>vawUea
 " a easier way to 'e'dit my 'v'imrc file
-nnoremap <Leader>ev :sp ~/.config/vimrc<CR>
+nnoremap <Leader>ev :vsp ~/.config/vimrc<CR>
 " source vimrc immediately
-nnoremap <Leader>sv :source $MYVIMRC<CR>
+nnoremap <Leader>sv :source $MYVIMRC<CR>:e<CR>
 noremap <silent> = %
 noremap <silent> X dd
+noremap <silent> <C-y> <Esc>:%y<CR>
+noremap <silent> <C-e> ge
+noremap <silent> 0 ^
+noremap <silent> ^ 0
 
-" Emacs key bindding in vim(only insert mode) 
-" Emacs(insert mode) + vim(noremal mode/visual mode) = Best Editor
-inoremap <C-P> <Up>
-inoremap <C-N> <Down>
-inoremap <C-J> <C-N>
-inoremap <C-K> <C-P>
-inoremap <C-A> <Home>
-inoremap <C-E> <End>
-inoremap <C-B> <Left>
-inoremap <C-F> <Right>
-
-" quicker window movement -- Windows are 'not' designed to offer you a view into a buffer and can not be uses as file-proxies.No more, no less.{{{
+" quicker cursor movement -- Windows are 'not' designed to offer you a view into a buffer and can not be uses as file-proxies.No more, no less.{{{
+noremap J 5j
+noremap K 5k  
 noremap <C-j> <C-w>j
 noremap <C-k> <C-w>k
 noremap <C-h> <C-w>h
@@ -90,11 +101,12 @@ filetype plugin indent on " enable file type detection
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "                                Basic Settings                                "
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+set sj=-50 " half page scrolling in vim
 set foldmethod=marker " manage vimrc files
 set nospell " close spell examine
 set number " show line number
 set numberwidth=1
-set relativenumber " show relative line number
+" set relativenumber " show relative line number
 set hlsearch " highlight the search part
 set incsearch " show the matching part while typing
 set encoding=utf-8 " configure the encoding
@@ -108,8 +120,7 @@ set nomodeline " disable mode lines (security measure)
 set noshowmode " do not show Insert, We already have it in lightline
 set mouse=a " allow mouse select and etc operation
 set noswapfile " no swap files
-set nowritebackup
-set cmdheight=1 " Better display for messages 
+set cmdheight=2 " Better display for messages 
 set updatetime=200 " You will have bad experience for disgnostic messages when it's default 4000
 set shortmess+=c
 set signcolumn=yes " always show signcolumns otherwise it would shift the text each time diagnostics appear/become resolved.
@@ -141,6 +152,7 @@ set display+=lastline
 set showcmd                                                            
 set statusline+=%*
 set statusline+=%#warningmsg#
+set statusline+=\ %<%F[%1*%M%*%n%R%H]%=\ %y\ %0(%{&fileformat}\ %{&encoding}\ Ln\ %l,\ Col\ %c/%L%) " 设置在状态行显示的信息
 set wildignore+=*.aux,*.out,*.toc " LaTex
 set wildignore+=*.orig " Merge files
 set wildignore+=*.sw? " vim swap files
@@ -153,6 +165,8 @@ set visualbell
 " set virtualedit=all " allow cursor to be positioned where there is no actual characters
 set modifiable
 set clipboard+=unnamedplus " use clipboard with all operations instead of using registers like '+' or '*"
+set nobackup
+set nowritebackup
 
 " nerdcommenter configurations--添加注释 {{{
 let g:NERDCustomDelimiters = { 'c': { 'left': '/*','right': '*/' } }
@@ -213,3 +227,32 @@ let g:black_linelength = 79
 " vim-airline
 let g:airline#extensions#tabline#enabled = 1
 let g:airline_powerline_fonts = 1
+
+" nvim-treesitter
+lua <<EOF
+require'nvim-treesitter.configs'.setup {
+  ensure_installed = "maintained",
+  highlight = {
+    enable = true,
+    disable = {},
+  },
+}
+EOF
+
+" nerdtree {{{
+map <M-n> :NERDTreeToggle<CR>  " open and close file tree
+nmap <leader>n :NERDTreeFind<CR>  " open current buffer in file tree
+" }}}
+
+" coc-nvim{{{
+
+" Use `[g` and `]g` to navigate diagnostics
+" Use `:CocDiagnostics` to get all diagnostics of current buffer in location list.
+nmap <silent> [g <Plug>(coc-diagnostic-prev)
+nmap <silent> ]g <Plug>(coc-diagnostic-next)
+
+" Make <CR> auto-select the first completion item and notify coc.nvim to
+" format on enter, <cr> could be remapped by other vim plugin
+inoremap <silent><expr> <cr> pumvisible() ? coc#_select_confirm()
+                              \: "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
+" }}}
