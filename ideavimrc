@@ -1,4 +1,24 @@
 set ideajoin
 set incsearch " show the matching part while typing
+" key-mapping {{{
 nnoremap U <C-r>
-noremap <silent> = %
+" Emacs like moving in insert mode
+inoremap <C-u> <Esc>vawUea
+inoremap <C-e> <Esc>$a
+inoremap <C-a> <Esc>^i
+inoremap <C-p> <Up>
+inoremap <C-n> <Down>
+inoremap <C-f> <Right>
+inoremap <C-b> <Left>
+" a easier way to 'e'dit my 'v'imrc file
+nnoremap <Leader>ev :e ~/.config/vimrc<CR>
+" source vimrc immediately
+nnoremap <Leader>sv :source $MYVIMRC<CR>:e<CR>
+noremap <silent> X dd
+noremap <silent> <C-y> <Esc>:%y<CR>
+noremap <silent> <C-e> ge
+noremap <silent> <M-e> gE
+noremap <silent> <M-[> :noh<CR>
+noremap <silent> 0 ^
+noremap <silent> ^ 0
+" }}}

@@ -1,71 +1,61 @@
-":help hardcopy
-":help TOhtml
-":help %y
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-"                                   Mappings                                   "
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+":h hardcopy
+":h TOhtml
+":h %y
+":h regexp :h %s/<certain word you want to calculate>//gn
+":h marks(visual mode mark and changed/yanked text mark)
 set nocompatible " nocompatible with vi
 let mapleader = ' ' " map leader key to <Space>
-
-" automatically downloads vim-plug to your machine if not found.
-if empty(glob('~/.config/nvim/autoload/plug.vim'))
-  silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs
-    \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
-  autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
-endif
+filetype plugin indent on " enable file type detection
 
 " vim-plug download confjigurations {{{
 call plug#begin('~/.config/nvim/autoload')
 
-Plug 'nvim-treesitter/nvim-treesitter'
 Plug 'ajmwagar/vim-deus'
 Plug 'iamcco/markdown-preview.nvim', { 'do': { -> mkdp#util#install() }, 'for': ['markdown', 'vim-plug']}
 Plug 'wellle/targets.vim' " add various text objects
 Plug 'Yggdroot/LeaderF', { 'do': './install.sh' }
 Plug 'easymotion/vim-easymotion'
 Plug 'ryanoasis/vim-devicons' " icons
-Plug 'preservim/nerdtree'
-Plug 'neoclide/coc.nvim', {'branch': 'release'}
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
+Plug 'preservim/nerdtree'
+Plug 'vim-syntastic/syntastic'
+Plug 'haya14busa/incsearch.vim'
+Plug 'nvim-treesitter/nvim-treesitter'
+Plug 'lervag/vimtex'
 
 call plug#end()
 " }}}
 
-" color {{{
-syntax on " turn on syntax highlighting
-colorscheme deus
+" colorscheme {{{
+syntax on
 set t_Co=256
 set termguicolors
-set background=dark    " Setting dark mode
 let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
 let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
+colorscheme deus
+set background=dark    " Setting dark mode
 let g:deus_termcolors=256
 " }}}
 
-nnoremap U <C-r>
-inoremap <C-u> <Esc>vawUea
-" a easier way to 'e'dit my 'v'imrc file
-nnoremap <Leader>ev :vsp ~/.config/vimrc<CR>
-" source vimrc immediately
+" key-mapping {{{
+nnoremap X dd
+nnoremap <Leader>ev :e ~/.config/vimrc<CR>
 nnoremap <Leader>sv :source $MYVIMRC<CR>:e<CR>
-noremap <silent> = %
-noremap <silent> X dd
-noremap <silent> <C-y> <Esc>:%y<CR>
-noremap <silent> <C-e> ge
-noremap <silent> 0 ^
-noremap <silent> ^ 0
+noremap <silent> <M-y> <Esc>:%y<CR>
+noremap <silent> <M-[> :noh<CR>
+" }}}
 
 " quicker cursor movement -- Windows are 'not' designed to offer you a view into a buffer and can not be uses as file-proxies.No more, no less.{{{
-noremap J 5j
-noremap K 5k  
+noremap <silent> J 5+
+noremap <silent> K 5-
+noremap <C-c> <C-w>c
 noremap <C-j> <C-w>j
 noremap <C-k> <C-w>k
 noremap <C-h> <C-w>h
 noremap <C-l> <C-w>l
-" noremap <M-h> zt
-" noremap <M-m> zz
-" noremap <M-l> zb
+noremap <M-s> <C-w>s
+noremap <M-v> <C-w>v
 " }}}
 
 " buffers -- Buffers are vim's file-proxies. If you think in terms of file, you think in terms of buffers, which is used in situation that one for editing and one for referencing.{{{
@@ -75,40 +65,17 @@ nnoremap <C-p> :bp<CR>
 map Q :bdelete\|:bnext<CR>
 " }}}
 
-" tab settings -- tab page are designed to contain one or more windows and contain buffers, which is often used on the separate part of the project and without messing with their current view.{{{
-" noremap <M-n> :tabn<CR>
-" noremap <M-p> :tabp<CR>
-" open a new tab with an empty buffer like ':tabnew filename'
-" noremap <M-t> :tabnew
-" // move the tabs to a specific spot with command ':tabm <tabPosition>', if
-" // don't give the command an <tabPosition> argument, then the current tab will
-" // be moved to the last spot
-" noremap tm :tabm
-" // open the content of current buffer in a new tab page
-" noremap ts :tab split<CR>
-"
-" // :tabdo %s/foo/bar/g -- replace foo with bar in files in all tabs
-" // or run through each open tab and run the search and replace
-" // command(%s/foo/bar/g) in each
-" // one
-"
-" :tabc -- close current tab
-" :tabo -- close all other tabs leaving ONLY the current tab open
-" }}}
-
-filetype plugin indent on " enable file type detection
-
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-"                                Basic Settings                                "
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-set sj=-50 " half page scrolling in vim
+" basic-settings {{{
+set ttimeoutlen=100 " fix the delay between normal mode and insert mode in tmux
+set sj=1 " half page scrolling in vim
+set magic
 set foldmethod=marker " manage vimrc files
 set nospell " close spell examine
-set number " show line number
+set number " display line number
 set numberwidth=1
-" set relativenumber " show relative line number
-set hlsearch " highlight the search part
-set incsearch " show the matching part while typing
+set norelativenumber " show relative line number
+set hlsearch " highlight all search result
+set incsearch " show incremental search results as you type
 set encoding=utf-8 " configure the encoding
 set termencoding=utf-8 " it will choose the first right configure to use
 set fileencodings=utf-8,gbk,utf-16le,cp1252,iso-8859-15,ucs-bom
@@ -119,15 +86,17 @@ set lazyredraw " don't update the display while executing macros
 set nomodeline " disable mode lines (security measure)
 set noshowmode " do not show Insert, We already have it in lightline
 set mouse=a " allow mouse select and etc operation
-set noswapfile " no swap files
+set noswapfile " disable swap file
 set cmdheight=2 " Better display for messages 
 set updatetime=200 " You will have bad experience for disgnostic messages when it's default 4000
-set shortmess+=c
+set shortmess=
 set signcolumn=yes " always show signcolumns otherwise it would shift the text each time diagnostics appear/become resolved.
-set noautochdir " do not change dirs automatically
+set cursorline
+set noautochdir " change dirs automatically
 set noerrorbells " No sound
+set novisualbell " No bell too
 set backspace=eol,start,indent " use backspace for delete space line
-set ignorecase " 当输出大写字母时，区分大小写  
+set ignorecase " do case insensitive search
 set smartcase " Overrides ignore when captial exists
 set showmatch " Show matching brackets/parenthesis
 set ruler " show the cursor's position
@@ -136,7 +105,6 @@ set timeoutlen=1000 " time in milliseconds to wait for a mapped sequence to comp
 
 " Editor {{{
 set autoindent                                   
-" set paste
 set smartindent
 set smarttab
 set shiftwidth=4 tabstop=4 softtabstop=4 expandtab " switch tabs to spaces automatically
@@ -146,13 +114,13 @@ set autoread
 set autowrite
 set autowriteall " Auto-write all file changes
 set laststatus=2 " show status line
-set showtabline=0
+set showtabline=2
 set hidden " make it possible to switch to another buffer when current buffer is not writed and abandoned
 set display+=lastline
 set showcmd                                                            
-set statusline+=%*
 set statusline+=%#warningmsg#
-set statusline+=\ %<%F[%1*%M%*%n%R%H]%=\ %y\ %0(%{&fileformat}\ %{&encoding}\ Ln\ %l,\ Col\ %c/%L%) " 设置在状态行显示的信息
+set statusline+=%*
+set statusline+=\ %<%F[%1*%M%*%n%R%H]%=\ %y\ %0(%{&fileformat}\ %{&encoding}\ Ln\ %l,\ Col\ %c/%L%)
 set wildignore+=*.aux,*.out,*.toc " LaTex
 set wildignore+=*.orig " Merge files
 set wildignore+=*.sw? " vim swap files
@@ -161,12 +129,11 @@ set wildignore+=.git,.hg " VCS files
 set tags=./.tags;,.tags
 set wildmenu " use <tab> with auto-completion in Command mode
 set wildmode=longest,list,full
-set visualbell
-" set virtualedit=all " allow cursor to be positioned where there is no actual characters
 set modifiable
 set clipboard+=unnamedplus " use clipboard with all operations instead of using registers like '+' or '*"
 set nobackup
 set nowritebackup
+" }}}
 
 " nerdcommenter configurations--添加注释 {{{
 let g:NERDCustomDelimiters = { 'c': { 'left': '/*','right': '*/' } }
@@ -180,17 +147,14 @@ let g:NERDToggleCheckAllLines = 1
 
 " Leaderf {{{
 let g:Lf_ShowDevIcons = 1
-" let g:Lf_DevIconsFont = 'DejaVuSansMono Nerd Font Mono'
-noremap <Leader>fp :LeaderfFile ..<CR>
 noremap <Leader>fm :LeaderfMru<CR>
 noremap <Leader>fu :LeaderfFunction<CR>
 noremap <Leader>fw :LeaderfWindow<CR>
 noremap <Leader>fb :LeaderfBuffer<CR>
-noremap <Leader>fc :LeaderfColorscheme<CR>
-noremap <Leader>fl :Leaderf! line<CR>
+noremap <Leader>fl :LeaderfLine<CR>
 noremap <Leader>ff :LeaderfFile<CR>
-noremap <Leader>fr :Leaderf rg<CR>
 noremap <Leader>fg :Leaderf gtags<CR>
+noremap <Leader>fr :Leaderf rg<CR>
 let g:Lf_NormalMap = {
             \ "File":   [["<ESC>", ':exec g:Lf_py "fileExplManager.quit()"<CR>']],
             \ "Buffer": [["<ESC>", ':exec g:Lf_py "bufExplManager.quit()"<CR>']],
@@ -199,20 +163,27 @@ let g:Lf_NormalMap = {
             \ "Function":    [["<ESC>", ':exec g:Lf_py "functionExplManager.quit()"<CR>']],
             \ "Colorscheme":    [["<ESC>", ':exec g:Lf_py "colorschemeExplManager.quit()"<CR>']],
             \}
-" rg built in Leaderf config
-let g:Lf_GtagsAutoGenerate = 1 " auto generate gtags 
+" Leaderf Gtags
+let g:Lf_GtagsAutoGenerate = 1
+let g:Lf_RootMarkers = ['.git']
 let g:Lf_Gtagslabel = 'native-pygments'
+let g:Lf_CacheDirectory = expand('~/.config/nvim/cache')
+noremap <leader>gr :<C-U><C-R>=printf("Leaderf gtags -r %s --auto-jump", expand("<cword>"))<CR><CR>
+noremap <leader>gd :<C-U><C-R>=printf("Leaderf gtags -d %s --auto-jump", expand("<cword>"))<CR><CR>
+noremap <leader>go :<C-U><C-R>=printf("Leaderf gtags --recall %s", "")<CR><CR>
+noremap <leader>gn :<C-U><C-R>=printf("Leaderf gtags --next %s", "")<CR><CR>
+noremap <leader>gp :<C-U><C-R>=printf("Leaderf gtags --previous %s", "")<CR><CR>
+" rg built in Leaderf config
 let g:Lf_RgConfig = [
         \ "--max-columns=150",
         \ "--glob=!git/*",
         \ "--hidden"
     \ ]
-noremap <Leader>a :<C-U><C-R>=printf("Leaderf! rg -e %s -g *.h -g *.cpp -g *.c", expand("<cword>"))<CR><CR>
-let g:Lf_CacheDirectory = expand('~/.config/nvim/cache')
 " }}}
 
-" easy-motion
-nmap mo <Plug>(easymotion-s2)
+" easy-motion {{{
+nmap \ <Plug>(easymotion-s2)
+" }}}
 
 " markdown preview for nvim {{{
 let g:mkdp_auto_start = 1 " open the window after entering markdown buffer
@@ -221,38 +192,62 @@ let g:mkdp_refresh_slow = 1
 let g:mkdp_browser = ''
 " }}}
 
-" black(python code linter)
+" black(python code linter) {{{
 let g:black_linelength = 79
+" }}}
 
-" vim-airline
+" vim-airline {{{
 let g:airline#extensions#tabline#enabled = 1
 let g:airline_powerline_fonts = 1
+" }}}
 
-" nvim-treesitter
+" nerdtree {{{
+nnoremap <Leader>t :NERDTreeToggle<CR>
+nnoremap <Leader>f :NERDTreeFind<CR> 
+" }}}
+
+" syntastic {{{
+let g:syntastic_always_populate_loc_list = 1
+let g:syntastic_auto_loc_list = 1
+let g:syntastic_check_on_open = 1
+let g:syntastic_check_on_wq = 0
+let g:syntastic_mode_map = {
+  \ 'mode': 'passive',
+  \ 'active_filetypes': [],
+  \ 'passive_filetypes': []
+\}
+nnoremap <Leader>sc :SyntasticCheck<CR> " make a syntax check
+nnoremap <Leader>sr :SyntasticReset<CR> " turn off the error notifiers
+nnoremap <Leader>si :SyntasticInfo<CR>
+nnoremap <Leader>st :SyntasticToggleMode<CR> " switch between passive mode and active mode
+" }}}
+
+" incsearch {{{
+map / <Plug>(incsearch-forward)
+map ? <Plug>(incsearch-backward)
+" }}}
+
+" nvim-treesitter {{{
 lua <<EOF
 require'nvim-treesitter.configs'.setup {
-  ensure_installed = "maintained",
+  indent = {
+    enable = true
+  },
   highlight = {
     enable = true,
-    disable = {},
+    use_languagetree = false, -- Use this to enable language injection (this is very unstable)
+    custom_captures = {
+      -- Highlight the @foo.bar capture group with the "Identifier" highlight group.
+      ["foo.bar"] = "Identifier",
+    },
   },
 }
 EOF
-
-" nerdtree {{{
-map <M-n> :NERDTreeToggle<CR>  " open and close file tree
-nmap <leader>n :NERDTreeFind<CR>  " open current buffer in file tree
 " }}}
 
-" coc-nvim{{{
+" competitive programming {{{
+" }}}
 
-" Use `[g` and `]g` to navigate diagnostics
-" Use `:CocDiagnostics` to get all diagnostics of current buffer in location list.
-nmap <silent> [g <Plug>(coc-diagnostic-prev)
-nmap <silent> ]g <Plug>(coc-diagnostic-next)
-
-" Make <CR> auto-select the first completion item and notify coc.nvim to
-" format on enter, <cr> could be remapped by other vim plugin
-inoremap <silent><expr> <cr> pumvisible() ? coc#_select_confirm()
-                              \: "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
+" terminal mode :h terminal-emulator {{{
+tnoremap <Esc> <C-\><C-n>
 " }}}
