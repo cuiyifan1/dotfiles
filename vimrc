@@ -1,8 +1,11 @@
-":h hardcopy
-":h TOhtml
-":h %y
-":h regexp :h %s/<certain word you want to calculate>//gn
-":h marks(visual mode mark and changed/yanked text mark)
+" Auto load for the first time use
+if empty(glob('~/.config/nvim/autoload/plug.vim'))
+	silent !curl -fLo ~/.config/nvim/autoload/plug.vim --create-dirs
+				\ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+	autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
+endif
+
+
 set nocompatible " nocompatible with vi
 let mapleader = ' ' " map leader key to <Space>
 filetype plugin indent on " enable file type detection
@@ -73,7 +76,7 @@ set foldmethod=marker " manage vimrc files
 set nospell " close spell examine
 set number " display line number
 set numberwidth=1
-set norelativenumber " show relative line number
+set relativenumber " show relative line number
 set hlsearch " highlight all search result
 set incsearch " show incremental search results as you type
 set encoding=utf-8 " configure the encoding
