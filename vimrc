@@ -233,6 +233,7 @@ map ? <Plug>(incsearch-backward)
 " nvim-treesitter {{{
 lua <<EOF
 require'nvim-treesitter.configs'.setup {
+  ensure_installed = "all",
   indent = {
     enable = true
   },
