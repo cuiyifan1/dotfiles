@@ -1,4 +1,4 @@
-" Auto load for the first time use
+" Autoload for the first time use
 if empty(glob('~/.config/nvim/autoload/plug.vim'))
 	silent !curl -fLo ~/.config/nvim/autoload/plug.vim --create-dirs
 				\ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
@@ -233,7 +233,7 @@ map ? <Plug>(incsearch-backward)
 " nvim-treesitter {{{
 lua <<EOF
 require'nvim-treesitter.configs'.setup {
-  ensure_installed = "all",
+  ensure_installed = { "c", "cpp", "rust" },
   indent = {
     enable = true
   },
