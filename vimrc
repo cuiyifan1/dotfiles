@@ -5,7 +5,6 @@ if empty(glob('~/.config/nvim/autoload/plug.vim'))
 	autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
 endif
 
-
 set nocompatible " nocompatible with vi
 let mapleader = ' ' " map leader key to <Space>
 filetype plugin indent on " enable file type detection
@@ -18,14 +17,14 @@ Plug 'iamcco/markdown-preview.nvim', { 'do': { -> mkdp#util#install() }, 'for': 
 Plug 'wellle/targets.vim' " add various text objects
 Plug 'Yggdroot/LeaderF', { 'do': './install.sh' }
 Plug 'easymotion/vim-easymotion'
-Plug 'ryanoasis/vim-devicons' " icons
-Plug 'vim-airline/vim-airline'
-Plug 'vim-airline/vim-airline-themes'
 Plug 'preservim/nerdtree'
 Plug 'vim-syntastic/syntastic'
 Plug 'haya14busa/incsearch.vim'
 Plug 'nvim-treesitter/nvim-treesitter'
 Plug 'lervag/vimtex'
+Plug 'ryanoasis/vim-devicons' " icons
+Plug 'vim-airline/vim-airline'
+Plug 'vim-airline/vim-airline-themes'
 
 call plug#end()
 " }}}
@@ -43,6 +42,7 @@ let g:deus_termcolors=256
 
 " key-mapping {{{
 nnoremap X dd
+nnoremap U <C-r>
 nnoremap <Leader>ev :e ~/.config/vimrc<CR>
 nnoremap <Leader>sv :source $MYVIMRC<CR>:e<CR>
 noremap <silent> <M-y> <Esc>:%y<CR>
@@ -52,7 +52,6 @@ noremap <silent> <M-[> :noh<CR>
 " quicker cursor movement -- Windows are 'not' designed to offer you a view into a buffer and can not be uses as file-proxies.No more, no less.{{{
 noremap <silent> J 5+
 noremap <silent> K 5-
-noremap <C-c> <C-w>c
 noremap <C-j> <C-w>j
 noremap <C-k> <C-w>k
 noremap <C-h> <C-w>h
@@ -133,19 +132,9 @@ set tags=./.tags;,.tags
 set wildmenu " use <tab> with auto-completion in Command mode
 set wildmode=longest,list,full
 set modifiable
-set clipboard+=unnamedplus " use clipboard with all operations instead of using registers like '+' or '*"
+" set clipboard+=unnamedplus \" use clipboard with all operations instead of using registers like '+' or '*"
 set nobackup
 set nowritebackup
-" }}}
-
-" nerdcommenter configurations--添加注释 {{{
-let g:NERDCustomDelimiters = { 'c': { 'left': '/*','right': '*/' } }
-let g:NERDSpaceDelims = 1
-let g:NERDCompactSexyComs = 1
-let g:NERDDefaultAlign = 'left'
-let g:NERDCommentEmptyLines = 1
-let g:NERDTrimTrailingWhitespace = 1
-let g:NERDToggleCheckAllLines = 1
 " }}}
 
 " Leaderf {{{
@@ -193,15 +182,6 @@ let g:mkdp_auto_start = 1 " open the window after entering markdown buffer
 let g:mkdp_auto_close = 1 " the vim will refresh markdown when save the buffer or leave from insert mode, default 0 is auto refresh markdown as you edit or move the cursor
 let g:mkdp_refresh_slow = 1
 let g:mkdp_browser = ''
-" }}}
-
-" black(python code linter) {{{
-let g:black_linelength = 79
-" }}}
-
-" vim-airline {{{
-let g:airline#extensions#tabline#enabled = 1
-let g:airline_powerline_fonts = 1
 " }}}
 
 " nerdtree {{{
@@ -254,4 +234,51 @@ EOF
 
 " terminal mode :h terminal-emulator {{{
 tnoremap <Esc> <C-\><C-n>
+" }}}
+
+" Ocaml setup {{{
+" ## added by OPAM user-setup for vim / base ## 93ee63e278bdfc07d1139a748ed3fff2 ## you can edit, but keep this line
+
+let s:opam_share_dir = system("opam config var share")
+let s:opam_share_dir = substitute(s:opam_share_dir, '[\r\n]*$', '', '')
+
+let s:opam_configuration = {}
+
+function! OpamConfOcpIndent()
+  execute "set rtp^=" . s:opam_share_dir . "/ocp-indent/vim"
+endfunction
+let s:opam_configuration['ocp-indent'] = function('OpamConfOcpIndent')
+
+function! OpamConfOcpIndex()
+  execute "set rtp+=" . s:opam_share_dir . "/ocp-index/vim"
+endfunction
+let s:opam_configuration['ocp-index'] = function('OpamConfOcpIndex')
+
+function! OpamConfMerlin()
+  let l:dir = s:opam_share_dir . "/merlin/vim"
+  execute "set rtp+=" . l:dir
+endfunction
+let s:opam_configuration['merlin'] = function('OpamConfMerlin')
+
+let s:opam_packages = ["ocp-indent", "ocp-index", "merlin"]
+let s:opam_check_cmdline = ["opam list --installed --short --safe --color=never"] + s:opam_packages
+let s:opam_available_tools = split(system(join(s:opam_check_cmdline)))
+for tool in s:opam_packages
+  " Respect package order (merlin should be after ocp-index)
+  if count(s:opam_available_tools, tool) > 0
+    call s:opam_configuration[tool]()
+  endif
+endfor
+" ## end of OPAM user-setup addition for vim / base ## keep this line
+" ## added by OPAM user-setup for vim / ocp-indent ## 1e334138d6ee35d8ee2d38430287cd96 ## you can edit, but keep this line
+if count(s:opam_available_tools,"ocp-indent") == 0
+  source "/Users/yifan/.opam/4.09.0/share/ocp-indent/vim/indent/ocaml.vim"
+endif
+
+" ## end of OPAM user-setup addition for vim / ocp-indent ## keep this line
+" }}}
+
+" vim-airline {{{
+let g:airline#extensions#tabline#enabled = 1
+let g:airline_powerline_fonts = 1
 " }}}
