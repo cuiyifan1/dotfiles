@@ -1,18 +1,14 @@
-" Autoload for the first time use
-if empty(glob('~/.config/nvim/autoload/plug.vim'))
-	silent !curl -fLo ~/.config/nvim/autoload/plug.vim --create-dirs
-				\ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
-	autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
-endif
-
 set nocompatible " nocompatible with vi
 let mapleader = ' ' " map leader key to <Space>
+let maplocalleader = '\'
 filetype plugin indent on " enable file type detection
 
 " vim-plug download confjigurations {{{
 call plug#begin('~/.config/nvim/autoload')
 
 Plug 'ajmwagar/vim-deus'
+Plug 'neoclide/coc.nvim', {'branch': 'release'}
+Plug 'vifm/vifm.vim'
 Plug 'iamcco/markdown-preview.nvim', { 'do': { -> mkdp#util#install() }, 'for': ['markdown', 'vim-plug']}
 Plug 'wellle/targets.vim' " add various text objects
 Plug 'Yggdroot/LeaderF', { 'do': './install.sh' }
@@ -20,11 +16,10 @@ Plug 'easymotion/vim-easymotion'
 Plug 'preservim/nerdtree'
 Plug 'vim-syntastic/syntastic'
 Plug 'haya14busa/incsearch.vim'
-Plug 'nvim-treesitter/nvim-treesitter'
 Plug 'lervag/vimtex'
-Plug 'ryanoasis/vim-devicons' " icons
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
+Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
 
 call plug#end()
 " }}}
@@ -70,7 +65,6 @@ map Q :bdelete\|:bnext<CR>
 " basic-settings {{{
 set ttimeoutlen=100 " fix the delay between normal mode and insert mode in tmux
 set sj=1 " half page scrolling in vim
-set magic
 set foldmethod=marker " manage vimrc files
 set nospell " close spell examine
 set number " display line number
@@ -78,10 +72,7 @@ set numberwidth=1
 set relativenumber " show relative line number
 set hlsearch " highlight all search result
 set incsearch " show incremental search results as you type
-set encoding=utf-8 " configure the encoding
-set termencoding=utf-8 " it will choose the first right configure to use
-set fileencodings=utf-8,gbk,utf-16le,cp1252,iso-8859-15,ucs-bom
-set fileformats=unix,dos,mac
+set encoding=utf-8
 set linespace=0 " No extra spaces between rows
 set confirm " Confirm before vim exit
 set lazyredraw " don't update the display while executing macros
@@ -91,9 +82,7 @@ set mouse=a " allow mouse select and etc operation
 set noswapfile " disable swap file
 set cmdheight=2 " Better display for messages 
 set updatetime=200 " You will have bad experience for disgnostic messages when it's default 4000
-set shortmess=
 set signcolumn=yes " always show signcolumns otherwise it would shift the text each time diagnostics appear/become resolved.
-set cursorline
 set noautochdir " change dirs automatically
 set noerrorbells " No sound
 set novisualbell " No bell too
@@ -120,21 +109,11 @@ set showtabline=2
 set hidden " make it possible to switch to another buffer when current buffer is not writed and abandoned
 set display+=lastline
 set showcmd                                                            
-set statusline+=%#warningmsg#
-set statusline+=%*
-set statusline+=\ %<%F[%1*%M%*%n%R%H]%=\ %y\ %0(%{&fileformat}\ %{&encoding}\ Ln\ %l,\ Col\ %c/%L%)
-set wildignore+=*.aux,*.out,*.toc " LaTex
-set wildignore+=*.orig " Merge files
-set wildignore+=*.sw? " vim swap files
-set wildignore+=.DS_Store " OSX files
-set wildignore+=.git,.hg " VCS files
-set tags=./.tags;,.tags
-set wildmenu " use <tab> with auto-completion in Command mode
-set wildmode=longest,list,full
 set modifiable
-" set clipboard+=unnamedplus \" use clipboard with all operations instead of using registers like '+' or '*"
 set nobackup
 set nowritebackup
+set splitbelow
+set splitright
 " }}}
 
 " Leaderf {{{
@@ -174,7 +153,7 @@ let g:Lf_RgConfig = [
 " }}}
 
 " easy-motion {{{
-nmap \ <Plug>(easymotion-s2)
+nmap mo <Plug>(easymotion-s2)
 " }}}
 
 " markdown preview for nvim {{{
@@ -199,6 +178,7 @@ let g:syntastic_mode_map = {
   \ 'active_filetypes': [],
   \ 'passive_filetypes': []
 \}
+let g:syntastic_ocaml_checkers = ['merlin']
 nnoremap <Leader>sc :SyntasticCheck<CR> " make a syntax check
 nnoremap <Leader>sr :SyntasticReset<CR> " turn off the error notifiers
 nnoremap <Leader>si :SyntasticInfo<CR>
@@ -210,25 +190,6 @@ map / <Plug>(incsearch-forward)
 map ? <Plug>(incsearch-backward)
 " }}}
 
-" nvim-treesitter {{{
-lua <<EOF
-require'nvim-treesitter.configs'.setup {
-  ensure_installed = { "c", "cpp", "rust" },
-  indent = {
-    enable = true
-  },
-  highlight = {
-    enable = true,
-    use_languagetree = false, -- Use this to enable language injection (this is very unstable)
-    custom_captures = {
-      -- Highlight the @foo.bar capture group with the "Identifier" highlight group.
-      ["foo.bar"] = "Identifier",
-    },
-  },
-}
-EOF
-" }}}
-
 " competitive programming {{{
 " }}}
 
@@ -236,49 +197,21 @@ EOF
 tnoremap <Esc> <C-\><C-n>
 " }}}
 
-" Ocaml setup {{{
-" ## added by OPAM user-setup for vim / base ## 93ee63e278bdfc07d1139a748ed3fff2 ## you can edit, but keep this line
-
-let s:opam_share_dir = system("opam config var share")
-let s:opam_share_dir = substitute(s:opam_share_dir, '[\r\n]*$', '', '')
-
-let s:opam_configuration = {}
-
-function! OpamConfOcpIndent()
-  execute "set rtp^=" . s:opam_share_dir . "/ocp-indent/vim"
-endfunction
-let s:opam_configuration['ocp-indent'] = function('OpamConfOcpIndent')
-
-function! OpamConfOcpIndex()
-  execute "set rtp+=" . s:opam_share_dir . "/ocp-index/vim"
-endfunction
-let s:opam_configuration['ocp-index'] = function('OpamConfOcpIndex')
-
-function! OpamConfMerlin()
-  let l:dir = s:opam_share_dir . "/merlin/vim"
-  execute "set rtp+=" . l:dir
-endfunction
-let s:opam_configuration['merlin'] = function('OpamConfMerlin')
-
-let s:opam_packages = ["ocp-indent", "ocp-index", "merlin"]
-let s:opam_check_cmdline = ["opam list --installed --short --safe --color=never"] + s:opam_packages
-let s:opam_available_tools = split(system(join(s:opam_check_cmdline)))
-for tool in s:opam_packages
-  " Respect package order (merlin should be after ocp-index)
-  if count(s:opam_available_tools, tool) > 0
-    call s:opam_configuration[tool]()
-  endif
-endfor
-" ## end of OPAM user-setup addition for vim / base ## keep this line
-" ## added by OPAM user-setup for vim / ocp-indent ## 1e334138d6ee35d8ee2d38430287cd96 ## you can edit, but keep this line
-if count(s:opam_available_tools,"ocp-indent") == 0
-  source "/Users/yifan/.opam/4.09.0/share/ocp-indent/vim/indent/ocaml.vim"
-endif
-
-" ## end of OPAM user-setup addition for vim / ocp-indent ## keep this line
-" }}}
-
-" vim-airline {{{
+" airline theme {{{ 
 let g:airline#extensions#tabline#enabled = 1
 let g:airline_powerline_fonts = 1
 " }}}
+
+" nvim-treesitter {{{ 
+lua <<EOF
+require'nvim-treesitter.configs'.setup {
+  ensure_installed = { "c", "cpp", "rust", "ocaml" },
+  indent = {
+    enable = true
+  },
+  highlight = {
+    enable = true,
+  },
+}
+EOF
+"}}}
