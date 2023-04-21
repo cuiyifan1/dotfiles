@@ -19,3 +19,5 @@ alias gl="git log --all --graph --decorate"
 alias gr="git remote -v"
 alias vim="nvim"
 alias r="ranger"
+
+alias time='gtime -f "\nCPU: %U\nReal: %es\nRAM: %MKB"'

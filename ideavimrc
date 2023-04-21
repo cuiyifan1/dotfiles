@@ -3,6 +3,13 @@ set number
 set relativenumber
 set hlsearch
 set ignorecase
+sethandler i:ide
+
 nnoremap X dd
-nnoremap <silent> J 5+
-nnoremap <silent> K 5-
+nnoremap U <C-r>
+noremap <C-j> <C-w>j
+noremap <C-k> <C-w>k
+noremap <C-h> <C-w>h
+noremap <C-l> <C-w>l
+nnoremap <C-n> :tabn<CR>
+nnoremap <C-p> :tabp<CR>

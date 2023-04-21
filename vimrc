@@ -19,19 +19,20 @@ Plug 'haya14busa/incsearch.vim'
 Plug 'lervag/vimtex'
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
-Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
+Plug 'jez/vim-better-sml'
+Plug 'cmugpi/vim-c0'
 
 call plug#end()
 " }}}
 
 " colorscheme {{{
-syntax on
+syntax enable
 set t_Co=256
 set termguicolors
 let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
 let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
+set background=dark
 colorscheme deus
-set background=dark    " Setting dark mode
 let g:deus_termcolors=256
 " }}}
 
@@ -45,8 +46,6 @@ noremap <silent> <M-[> :noh<CR>
 " }}}
 
 " quicker cursor movement -- Windows are 'not' designed to offer you a view into a buffer and can not be uses as file-proxies.No more, no less.{{{
-noremap <silent> J 5+
-noremap <silent> K 5-
 noremap <C-j> <C-w>j
 noremap <C-k> <C-w>k
 noremap <C-h> <C-w>h
@@ -63,6 +62,7 @@ map Q :bdelete\|:bnext<CR>
 " }}}
 
 " basic-settings {{{
+set cursorline
 set ttimeoutlen=100 " fix the delay between normal mode and insert mode in tmux
 set sj=1 " half page scrolling in vim
 set foldmethod=marker " manage vimrc files
@@ -93,6 +93,7 @@ set showmatch " Show matching brackets/parenthesis
 set ruler " show the cursor's position
 set history=1000 " save 1000 cmd
 set timeoutlen=1000 " time in milliseconds to wait for a mapped sequence to complete
+set clipboard+=unnamedplus " use the clipboard for all operations
 
 " Editor {{{
 set autoindent                                   
@@ -105,7 +106,7 @@ set autoread
 set autowrite
 set autowriteall " Auto-write all file changes
 set laststatus=2 " show status line
-set showtabline=2
+" set showtabline=2
 set hidden " make it possible to switch to another buffer when current buffer is not writed and abandoned
 set display+=lastline
 set showcmd                                                            
@@ -179,6 +180,9 @@ let g:syntastic_mode_map = {
   \ 'passive_filetypes': []
 \}
 let g:syntastic_ocaml_checkers = ['merlin']
+let g:syntastic_cpp_checkers = ['cpplint']
+let g:syntastic_c_checkers = ['cpplint']
+let g:syntastic_cpp_cpplint_exec = 'cpplint'
 nnoremap <Leader>sc :SyntasticCheck<CR> " make a syntax check
 nnoremap <Leader>sr :SyntasticReset<CR> " turn off the error notifiers
 nnoremap <Leader>si :SyntasticInfo<CR>
@@ -197,21 +201,45 @@ map ? <Plug>(incsearch-backward)
 tnoremap <Esc> <C-\><C-n>
 " }}}
 
-" airline theme {{{ 
+" airline theme {{{
 let g:airline#extensions#tabline#enabled = 1
-let g:airline_powerline_fonts = 1
+" let g:airline_powerline_fonts = 1
 " }}}
 
-" nvim-treesitter {{{ 
-lua <<EOF
-require'nvim-treesitter.configs'.setup {
-  ensure_installed = { "c", "cpp", "rust", "ocaml" },
-  indent = {
-    enable = true
-  },
-  highlight = {
-    enable = true,
-  },
-}
-EOF
-"}}}
+" vim-better-sml {{{
+augroup vimbettersml
+  au!
+
+  " ----- Keybindings -----
+
+  au FileType sml nnoremap <silent> <buffer> <leader>t :SMLTypeQuery<CR>
+  au FileType sml nnoremap <silent> <buffer> gd :SMLJumpToDef<CR>
+
+  " open the REPL terminal buffer
+  au FileType sml nnoremap <silent> <buffer> <leader>is :SMLReplStart<CR>
+  " close the REPL (mnemonic: k -> kill)
+  au FileType sml nnoremap <silent> <buffer> <leader>ik :SMLReplStop<CR>
+  " build the project (using CM if possible)
+  au FileType sml nnoremap <silent> <buffer> <leader>ib :SMLReplBuild<CR>
+  " for opening a structure, not a file
+  au FileType sml nnoremap <silent> <buffer> <leader>io :SMLReplOpen<CR>
+  " use the current file into the REPL (even if using CM)
+  au FileType sml nnoremap <silent> <buffer> <leader>iu :SMLReplUse<CR>
+  " clear the REPL screen
+  au FileType sml nnoremap <silent> <buffer> <leader>ic :SMLReplClear<CR>
+  " set the print depth to 100
+  au FileType sml nnoremap <silent> <buffer> <leader>ip :SMLReplPrintDepth<CR>
+
+  " ----- Other settings -----
+
+  " Uncomment to try out conceal characters
+  au FileType sml setlocal conceallevel=2
+
+  " Uncomment to try out same-width conceal characters
+  let g:sml_greek_tyvar_show_tick = 1
+augroup END
+" }}}
+
+" coc-nvim {{{
+
+" }}}
